@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import uas.arun.messenger.database.Database;
+import uas.arun.messenger.exception.DataNotFoundException;
 import uas.arun.messenger.model.Message;
 
 public class MessageService {
@@ -24,22 +25,23 @@ public class MessageService {
 
 	public List<Message> getAllMessagesForYear(int year) {
 		// return null;
-//		List<Message> list = messages.values().stream().filter(m -> m.getCreated().getYear() == year)
-//				.collect(Collectors.toCollection(ArrayList<Message>::new));
-//		return list;
+		// List<Message> list = messages.values().stream().filter(m ->
+		// m.getCreated().getYear() == year)
+		// .collect(Collectors.toCollection(ArrayList<Message>::new));
+		// return list;
 		// return null;
-		
+
 		List<Message> list = new ArrayList<>();
-		
+
 		Calendar cal = Calendar.getInstance();
-		for(Message message : messages.values()){
+		for (Message message : messages.values()) {
 			cal.setTime(message.getCreated());
-			if(cal.get(Calendar.YEAR) == year){
+			if (cal.get(Calendar.YEAR) == year) {
 				list.add(message);
 			}
 		}
 		return list;
-		
+
 	}
 
 	public List<Message> getAllMessagesPaginated(int start, int size) {
@@ -51,7 +53,12 @@ public class MessageService {
 	}
 
 	public Message getMessage(long id) {
-		return messages.get(id);
+		Message message = messages.get(id);
+
+		if (message == null)
+			throw new DataNotFoundException("Message with id " + id + "");
+
+		return message;
 	}
 
 	public Message addMessage(Message message) {
